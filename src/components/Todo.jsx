@@ -1,7 +1,18 @@
 import axios from "../utils/axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addTodoError, addTodoLoading, addTodoSucess } from "../Store/action";
+import {
+  addTodoError,
+  addTodoLoading,
+  addTodoSucess,
+  getTodoError,
+  getTodoLoading,
+  getTodoSucess,
+  removeTodoError,
+  removeTodoLoading,
+  removeTodoSucess,
+} from "../Store/action";
+import { Button, Col, Row } from "antd";
 
 export const Todo = () => {
   const { loading, todos, error } = useSelector((state) => ({
@@ -11,6 +22,21 @@ export const Todo = () => {
   }));
   const dispatch = useDispatch();
   const [text, setText] = useState("");
+  useEffect(() => {
+    getTodo();
+  }, []);
+
+  const getTodo = () => {
+    dispatch(getTodoLoading());
+    axios
+      .get("/")
+      .then(({ data }) => {
+        dispatch(getTodoSucess(data));
+      })
+      .catch((err) => {
+        dispatch(getTodoError(err));
+      });
+  };
   return (
     <div>
       <input
@@ -21,7 +47,8 @@ export const Todo = () => {
           setText(e.target.value);
         }}
       />
-      <button
+      <Button
+        type="primary"
         onClick={() => {
           dispatch(addTodoLoading());
           axios
@@ -29,6 +56,8 @@ export const Todo = () => {
             .then(({ data }) => {
               console.log(data);
               dispatch(addTodoSucess(data));
+              getTodo();
+              setText("");
             })
             .catch((err) => {
               dispatch(addTodoError(err));
@@ -36,14 +65,54 @@ export const Todo = () => {
         }}
       >
         Add Todo
-      </button>
-      {todos.map((e) => {
-        return (
-          <div key={e.id}>
-            {e.title} {e.status ? "Done" : "Not Done"}
-          </div>
-        );
-      })}
+      </Button>
+      {loading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>Something went wrong</div>
+      ) : (
+        <Row gutter={[1200, 48]}>
+          {" "}
+          {todos.map((e) => {
+            return (
+              <Col>
+                <div key={e.id}>
+                  {e.title} {e.status ? "Done" : "Not Done"}
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={() => {
+                      dispatch(removeTodoLoading());
+                      axios
+                        .delete(`${e.id}`)
+                        .then(({ data }) => {
+                          dispatch(removeTodoSucess());
+                          getTodo();
+                        })
+                        .catch((err) => {
+                          dispatch(removeTodoError());
+                        });
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </Col>
+            );
+          })}
+        </Row>
+      )}
     </div>
   );
 };
+
+/*
+*
+  <Row>
+      <Col span={6}>col-6</Col>
+      <Col span={6}>col-6</Col>
+      <Col span={6}>col-6</Col>
+      <Col span={6}>col-6</Col>
+    </Row>
+
+*/
