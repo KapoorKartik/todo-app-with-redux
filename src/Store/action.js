@@ -8,6 +8,9 @@ import {
   REMOVE_TODO_ERROR,
   REMOVE_TODO_LOADING,
   REMOVE_TODO_SUCESS,
+  TOGGLE_TODO_ERROR,
+  TOGGLE_TODO_LOADING,
+  TOGGLE_TODO_SUCESS,
 } from "./actionTypes.js";
 const addTodoLoading = () => {
   return {
@@ -60,6 +63,23 @@ const removeTodoError = (err) => {
   return { type: REMOVE_TODO_ERROR, payload: err };
 };
 
+const toggleTodoLoading = () => {
+  return {
+    type: TOGGLE_TODO_LOADING,
+  };
+};
+
+const toggleTodoSucess = (id) => {
+  return {
+    type: TOGGLE_TODO_SUCESS,
+    payload: id,
+  };
+};
+
+const toggleTodoError = (err) => {
+  return { type: TOGGLE_TODO_ERROR, payload: err };
+};
+
 export {
   addTodoError,
   addTodoLoading,
@@ -67,6 +87,9 @@ export {
   getTodoError,
   getTodoLoading,
   getTodoSucess,
+  toggleTodoError,
+  toggleTodoLoading,
+  toggleTodoSucess,
   removeTodoError,
   removeTodoLoading,
   removeTodoSucess,

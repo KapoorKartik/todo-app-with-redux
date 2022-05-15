@@ -8,6 +8,9 @@ import {
   REMOVE_TODO_ERROR,
   REMOVE_TODO_LOADING,
   REMOVE_TODO_SUCESS,
+  TOGGLE_TODO_ERROR,
+  TOGGLE_TODO_LOADING,
+  TOGGLE_TODO_SUCESS,
 } from "./actionTypes.js";
 
 const init = { loading: false, todos: [], error: false };
@@ -44,6 +47,15 @@ export const reducer = (state = init, { type, payload }) => {
       };
 
     case REMOVE_TODO_ERROR:
+      return { ...state, loading: false, error: true };
+
+    case TOGGLE_TODO_LOADING:
+      return { ...state, loading: true };
+
+    case TOGGLE_TODO_SUCESS:
+      return { ...state, loading: false };
+
+    case TOGGLE_TODO_ERROR:
       return { ...state, loading: false, error: true };
 
     default:
